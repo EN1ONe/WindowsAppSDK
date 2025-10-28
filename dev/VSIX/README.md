@@ -1,6 +1,8 @@
 # Windows App SDK Visual Studio Extension
 
-This repository contains the Visual Studio 2022 extension that provides project and item templates for [Windows App SDK](https://github.com/microsoft/WindowsAppSDK) (WinUI 3) development. The extension enables developers to quickly create Windows desktop applications using either C++/WinRT or C#.
+This repository contains the Visual Studio extension that provides project and item templates for [Windows App SDK](https://github.com/microsoft/WindowsAppSDK) (WinUI 3) development. The extension enables developers to quickly create Windows desktop applications using either C++/WinRT or C#.
+
+**Supported Versions**: Visual Studio 2022 and Visual Studio 2026
 
 ## 📋 Table of Contents
 
@@ -24,11 +26,12 @@ This extension provides:
 
 ### Key Features
 
-- ✅ Visual Studio 2022 (Dev17) support
+- ✅ Visual Studio 2022 and Visual Studio 2026 support
 - ✅ Both C++/WinRT and C# language support
 - ✅ Desktop and platform-agnostic templates
 - ✅ Automatic NuGet package dependency installation
-- ✅ Standalone and Component deployment modes
+- ✅ Component deployment (ships with Visual Studio)
+- ✅ Standalone deployment (for testing purposes)
 - ✅ Localized in 14 languages
 
 ## Project Structure
@@ -144,10 +147,12 @@ This project creates **VSIX packages** (Visual Studio Extension) that integrate 
 
 | Mode | Description | Use Case |
 |------|-------------|----------|
-| **Standalone** | Distributed via VS Marketplace or manual install | Public releases, developer downloads |
-| **Component** | Bundled with Visual Studio installation | Microsoft-managed VS components |
+| **Standalone** | Manual VSIX installation | Testing and development purposes only |
+| **Component** | Bundled with Visual Studio installation | Production deployment, ships with Visual Studio |
 
 The deployment mode is controlled by the `$(Deployment)` MSBuild property in `Directory.Build.props` (defaults to `Standalone`).
+
+> **Note**: The Standalone VSIX is for testing and development purposes only. The Component VSIX is the production version that ships with Visual Studio.
 
 ### Why Separate C++ and C# Extensions?
 
@@ -156,14 +161,14 @@ The solution builds two separate VSIX files for architectural and practical reas
 1. **Template Set Isolation**: C++ developers only see C++/WinRT templates, C# developers only see C# templates
 2. **Dependency Management**: Different SDK requirements (C++/WinRT vs .NET)
 3. **Installation Size**: Users only install what they need
-4. **Marketplace Discovery**: Separate listings improve discoverability by language preference
+4. **Component Delivery**: Separate components ship with Visual Studio installations based on selected workloads
 
 ## Getting Started
 
 ### Prerequisites
 
 #### Required Software
-- **Visual Studio 2022** (17.0 or later)
+- **Visual Studio 2022 or Visual Studio 2026** (17.0 or later)
   - Workload: **Visual Studio extension development** (includes VSSDK)
   - Workload: **Desktop development with C++** (for C++ templates)
   - Workload: **.NET desktop development** (for C# templates)
@@ -254,7 +259,9 @@ Visual Studio provides an isolated "Experimental Instance" for testing extension
 
 #### Manual VSIX Installation
 
-For testing the packaged VSIX:
+For testing the packaged Standalone VSIX:
+
+> **Important**: The Standalone VSIX is for testing purposes only. End users receive the Component VSIX that ships with Visual Studio.
 
 ```powershell
 # Navigate to build output
