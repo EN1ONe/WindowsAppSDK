@@ -263,6 +263,18 @@ For testing the packaged Standalone VSIX:
 
 > **Important**: The Standalone VSIX is for testing purposes only. End users receive the Component VSIX that ships with Visual Studio.
 
+**Prerequisites for Standalone Installation:**
+
+Before installing the Standalone VSIX, you must first uninstall the Windows App SDK templates that ship with Visual Studio to avoid conflicts:
+
+1. **For C# templates**: Open **Visual Studio Installer** and uninstall the **WinUI application development** workload (or modify it to remove Windows App SDK components)
+
+2. **For C++ templates**: Open **Visual Studio Installer**, click on the **WinUI 3** workload, and uncheck the **"C++ WinUI Development Tools"** checkbox under Optional components
+
+> **Note**: Failing to uninstall the Component templates will result in duplicate or conflicting template registrations.
+
+**Installation Steps:**
+
 ```powershell
 # Navigate to build output
 cd BuildOutput\obj\AnyCPUDebug\Standalone\WindowsAppSDK.Cs.Extension.Dev17\
