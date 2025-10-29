@@ -273,6 +273,22 @@ Before installing the Standalone VSIX, you must first uninstall the Windows App 
 
 > **Note**: Failing to uninstall the Component templates will result in duplicate or conflicting template registrations.
 
+**Configuration Step:**
+
+Before installing, configure the VSIX to be experimental to avoid conflicts with future Component installations:
+
+1. **For C# templates**: Edit `Extension/Cs/Dev17/Standalone/source.extension.vsixmanifest`
+   - Change the `Identity Id` from `Microsoft.WindowsAppSDK.Cs.Dev17` to `Microsoft.WindowsAppSDK.Cs.Dev17.Experimental`
+   - Set `<Preview>true</Preview>`
+
+2. **For C++ templates**: Edit `Extension/Cpp/Dev17/Standalone/source.extension.vsixmanifest`
+   - Change the `Identity Id` from `Microsoft.WindowsAppSDK.Cpp.Dev17` to `Microsoft.WindowsAppSDK.Cpp.Dev17.Experimental`
+   - Set `<Preview>true</Preview>`
+
+3. **Rebuild the solution** after making these changes
+
+> **Note**: The `.Experimental` suffix ensures the Standalone VSIX is treated as a separate extension from the Component VSIX that ships with Visual Studio.
+
 **Installation Steps:**
 
 ```powershell
@@ -335,14 +351,14 @@ Once you have the Standalone VSIX installed, you can rebuild and test the extens
    Copy your newly built DLL from the build output to the VSIX installation location:
    ```powershell
    # Example (adjust paths for your machine)
-   Copy-Item BuildOutput\obj\AnyCPUDebug\Standalone\WindowsAppSDK.Cs.Extension.Dev17\WindowsAppSDK.Cs.Extension.Dev17.dll `
+   Copy-Item BuildOutput\obj\AnyCPUDebug\Standalone\WindowsAppSDK.Cs.Extension.Dev17\WindowsAppSDK.Cs.Extension.Dev17.dll 
              "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\Extensions\DWZKPL5K.EPF\" -Force
    ```
 
 6. **Test your changes**
-   - Restart Visual Studio to load the new binaries
+   - Start a new instance of Visual Studio
    - Set breakpoints in your extension code
-   - Debug using **Debug > Attach to Process** (attach to another VS instance)
+   - Debug using **Debug > Attach to Process** (attach to other VS instance)
    - Create a project from a template to trigger your breakpoints
    - Verify outputs in the Output window and through the debugger
 
