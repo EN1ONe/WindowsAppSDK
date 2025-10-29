@@ -1094,6 +1094,38 @@ This catches issues with:
    devenv /RootSuffix Exp /ResetSettings
    ```
 
+---
+
+#### Issue: Unable to restore NuGet packages for the solution
+
+**Symptoms**: NuGet restore fails when building the solution, package restore errors
+
+**Causes**:
+- Missing .NET SDK versions
+- Test processes blocking TAEF package restoration
+- NuGet package source issues
+
+**Solutions**:
+1. **Install required .NET SDKs**:
+   - Install **.NET 9.0 SDK** (primary requirement)
+   - Install **.NET 8.0 SDK** (may also be needed)
+   - Download from [dotnet.microsoft.com](https://dotnet.microsoft.com/download)
+
+2. **Check for blocking processes**:
+   - Open **Task Manager**
+   - Look for **Wex** or **TAEF** test processes running
+   - End these processes if found (Wex blocks TAEF package restoration)
+
+3. **Clear NuGet caches**:
+   ```powershell
+   dotnet nuget locals all --clear
+   ```
+
+4. **Verify NuGet sources**:
+   ```powershell
+   dotnet nuget list source
+   ```
+
 ### Logs and Diagnostics
 
 | Log Location | Contains |
