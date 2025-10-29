@@ -550,17 +550,17 @@ Project Creation Flow
 │   └─ Subscribe to SolutionRestoreFinished event
 │
 ├─ IWizard.ProjectFinishedGenerating()
-│   ├─ Detect project type (C++ vs C#)
+│   ├─ Detect project type (C++ vs C#/wapproj)
 │   │
 │   ├─ [C++ Projects]
 │   │   ├─ Install packages immediately with progress dialog
 │   │   └─ Show errors via MessageBox if installation fails
 │   │
-│   └─ [C# Projects]
+│   └─ [C# and Windows Application Packaging Projects]
 │       └─ Wait for solution restore (handled in event)
 │
 ├─ IVsNuGetProjectUpdateEvents.SolutionRestoreFinished
-│   ├─ [C# Projects Only]
+│   ├─ [C# and Windows Application Packaging Projects Only]
 │   ├─ Install packages after NuGet restore completes
 │   └─ Show errors via InfoBar if installation fails
 │
@@ -593,17 +593,17 @@ public partial class NuGetPackageInstaller : IWizard
 }
 ```
 
-#### Why C++ and C# are Handled Differently
+#### Why C++ and C#/wapproj are Handled Differently
 
-| Aspect | C++ Projects | C# Projects |
-|--------|--------------|-------------|
-| **Project System** | Legacy VC project system | New SDK-style project system |
+| Aspect | C++ Projects | C# and Windows Application Packaging Projects |
+|--------|--------------|------------------------------------------------|
+| **Project System** | Legacy VC project system | New SDK-style project system (C#), MSBuild-based (wapproj) |
 | **NuGet Integration** | Limited, requires immediate install | Full support, uses restore system |
 | **Installation Timing** | `ProjectFinishedGenerating()` | `SolutionRestoreFinished` event |
 | **Progress UI** | Modal progress dialog (`IVsThreadedWaitDialog2`) | Non-blocking InfoBar |
 | **Error Display** | MessageBox + Output window | InfoBar + Output window |
 
-**Rationale**: C# projects have a restore phase that conflicts with immediate package installation. Installing packages before restore completes causes `InvalidOperationException`. C++ projects don't have this restore phase, so they can install immediately.
+**Rationale**: C# and Windows Application Packaging Projects (wapproj) have a restore phase that conflicts with immediate package installation. Installing packages before restore completes causes `InvalidOperationException`. C++ projects don't have this restore phase, so they can install immediately.
 
 ### Wizard Lifecycle Methods
 
@@ -658,14 +658,14 @@ private void OnSolutionRestoreFinished(IReadOnlyList<string> projects)
 ```
 
 **Called**: After NuGet restore completes (event handler)  
-**Purpose**: Install packages for C# projects
+**Purpose**: Install packages for C# and Windows Application Packaging Projects
 
 ```csharp
 await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 
 Guid projectGuid = GetProjectGuid(_project);
 
-// Only handle non-C++ projects here
+// Only handle non-C++ projects here (C# and wapproj)
 if (!projectGuid.Equals(SolutionVCProjectGuid))
 {
     // Unsubscribe to prevent duplicate calls
@@ -753,7 +753,7 @@ private Dictionary<string, Exception> _failedPackageExceptions = new Dictionary<
 
 Each failed package installation is tracked with its exception for detailed reporting.
 
-#### InfoBar Integration (C# Projects)
+#### InfoBar Integration (C# and Windows Application Packaging Projects)
 
 When packages fail to install, an InfoBar appears at the top of Visual Studio:
 
@@ -972,9 +972,9 @@ Currently, this solution does not include automated unit tests. Manual testing i
 
 #### For Wizard Changes
 - [ ] C++ projects install packages immediately
-- [ ] C# projects install after restore
+- [ ] C# and Windows Application Packaging Projects install after restore
 - [ ] Progress dialog shows for C++
-- [ ] InfoBar shows for C# on failure
+- [ ] InfoBar shows for C# and wapproj on failure
 - [ ] MessageBox shows for C++ on failure
 - [ ] Output window shows detailed errors
 - [ ] "Manage NuGet Packages" link works
@@ -1019,11 +1019,11 @@ This catches issues with:
 **Symptoms**: Package installation fails with exception during project creation
 
 **Causes**:
-- Installing packages before NuGet restore completes (C# projects)
+- Installing packages before NuGet restore completes (C# and wapproj projects)
 - Double-installation attempt
 
 **Solutions**:
-- Ensure C# projects only install in `OnSolutionRestoreFinished`
+- Ensure C# and Windows Application Packaging Projects only install in `OnSolutionRestoreFinished`
 - Add guard check: `if (!projectGuid.Equals(SolutionVCProjectGuid))`
 - Unsubscribe from event after first call
 
