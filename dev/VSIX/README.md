@@ -285,6 +285,69 @@ cd BuildOutput\obj\AnyCPUDebug\Standalone\WindowsAppSDK.Cs.Extension.Dev17\
 
 Uninstall via: **Extensions > Manage Extensions > Installed**
 
+#### Iterative Development with Standalone VSIX
+
+Once you have the Standalone VSIX installed, you can rebuild and test the extension without reinstalling it by swapping the binaries:
+
+1. **Open the solution**
+   ```powershell
+   # Open WindowsAppSDK.Extension.sln
+   ```
+
+2. **Build the extension project**
+   - Build `WindowsAppSDK.Cpp.Extension.Dev17` for C++ templates
+   - Build `WindowsAppSDK.Cs.Extension.Dev17` for C# templates
+
+3. **Locate the newly built binaries**
+   
+   Check the build output folder for the compiled DLLs:
+   ```
+   BuildOutput\obj\AnyCPUDebug\Standalone\WindowsAppSDK.Cs.Extension.Dev17\WindowsAppSDK.Cs.Extension.Dev17.dll
+   ```
+
+4. **Find the VSIX installation location**
+   
+   The easiest way to find where Visual Studio loads the extension from:
+   
+   a. Open **two instances of Visual Studio**:
+      - One as the debugger (your development instance)
+      - One as the debugee (test instance)
+   
+   b. In the **debugger instance**:
+      - Go to **Debug > Attach to Process**
+      - Attach to the debugee Visual Studio process (`devenv.exe`)
+   
+   c. In the **debugee instance**:
+      - Create a new C# or C++ WinUI project from your installed templates
+   
+   d. In the **debugger instance**:
+      - Go to **Debug > Windows > Modules**
+      - Search for `WindowsAppSDK.Cs.Extension.Dev17.dll` (or `.Cpp.` for C++)
+      - The **Path** column shows where the VSIX is installed
+   
+   Example path:
+   ```
+   C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\Extensions\DWZKPL5K.EPF\WindowsAppSDK.Cs.Extension.Dev17.dll
+   ```
+
+5. **Swap the binaries**
+   
+   Copy your newly built DLL from the build output to the VSIX installation location:
+   ```powershell
+   # Example (adjust paths for your machine)
+   Copy-Item BuildOutput\obj\AnyCPUDebug\Standalone\WindowsAppSDK.Cs.Extension.Dev17\WindowsAppSDK.Cs.Extension.Dev17.dll `
+             "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\Extensions\DWZKPL5K.EPF\" -Force
+   ```
+
+6. **Test your changes**
+   - Restart Visual Studio to load the new binaries
+   - Set breakpoints in your extension code
+   - Debug using **Debug > Attach to Process** (attach to another VS instance)
+   - Create a project from a template to trigger your breakpoints
+   - Verify outputs in the Output window and through the debugger
+
+> **Note**: You'll need to repeat the binary swap each time you make changes. This approach is faster than uninstalling and reinstalling the VSIX for each test iteration.
+
 ### Adding a New Project Template
 
 Follow these steps to add a new project template (example: C# "Empty App"):
