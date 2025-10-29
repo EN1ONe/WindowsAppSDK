@@ -22,7 +22,7 @@ This extension provides:
 - **Project Templates**: Complete application templates that create fully-configured Windows App SDK projects
 - **Item Templates**: Individual file templates (pages, controls, resources) that can be added to existing projects
 - **Automated NuGet Package Installation**: Wizard-based system that ensures required packages are installed automatically
-- **Multi-Language Support**: Separate extensions for C++ and C# with localized resources
+- **Multi-Language Support**: Separate extensions for C++ and C# with localized resources (localized template wizard coming soon!)
 
 ### Key Features
 
@@ -32,7 +32,7 @@ This extension provides:
 - ✅ Automatic NuGet package dependency installation
 - ✅ Component deployment (ships with Visual Studio)
 - ✅ Standalone deployment (for testing purposes)
-- ✅ Localized in 14 languages
+- ✅ Localized in 14 languages (localized template wizard coming soon!)
 
 ## Project Structure
 
@@ -444,26 +444,6 @@ Follow these patterns for consistency:
 | VSTemplate File | Matches project name | `WinUI.Desktop.Cs.PackagedApp.vstemplate` |
 | Template ID | `Microsoft.WinUI.[Context].[Lang].TemplateName` | `Microsoft.WinUI.Desktop.Cs.PackagedApp` |
 
-### Localization
-
-All user-visible strings should be localized:
-
-1. **Add string resources** to `Extension/[Cpp|Cs]/Common/VSPackage.resx`
-   - Template names (ID 1000-1999)
-   - Template descriptions (ID 2000-2999)
-
-2. **Localize to 14 languages**:
-   - cs-CZ (Czech), de-DE (German), en-US (English), es-ES (Spanish)
-   - fr-FR (French), it-IT (Italian), ja-JP (Japanese), ko-KR (Korean)
-   - pl-PL (Polish), pt-BR (Portuguese), ru-RU (Russian), tr-TR (Turkish)
-   - zh-CN (Chinese Simplified), zh-TW (Chinese Traditional)
-
-3. **Reference in `.vstemplate`**:
-   ```xml
-   <Name ID="1000" Package="{PackageGuid}" />
-   <Description ID="2000" Package="{PackageGuid}" />
-   ```
-
 ## Template Wizard System
 
 The template wizard automates NuGet package installation to ensure projects have the required dependencies for Windows App SDK.
@@ -865,7 +845,6 @@ We welcome contributions! Here's how to get started:
 - **Naming**: Follow existing naming conventions (see table above)
 - **Structure**: Match the organization of similar templates
 - **Parameters**: Use standard template parameters (`$projectname$`, `$safeprojectname$`, etc.)
-- **Localization**: Add strings to all 14 language resource files
 - **Testing**: Verify template creation, build, and run on all configurations
 
 #### Pull Request Checklist
@@ -921,11 +900,6 @@ Currently, this solution does not include automated unit tests. Manual testing i
 - [ ] Output window shows detailed errors
 - [ ] "Manage NuGet Packages" link works
 - [ ] No deadlocks or UI freezes
-
-#### For Localization
-- [ ] Test at least 3 languages (en-US, de-DE, ja-JP recommended)
-- [ ] All strings display (no resource keys visible)
-- [ ] Text fits in UI elements
 
 ### Testing in a Clean Environment
 
